@@ -1,6 +1,6 @@
 *.ipynb_checkpoints/
 
-PyPolyCrystals.egg-info/
+PyAPD.egg-info/
 
 **/__pycache__/
 

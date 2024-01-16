@@ -2,99 +2,78 @@ import torch
 import numpy as np
 from pykeops.torch import LazyTensor
 
-# def sample_grid_old(n, dim=3,box_length = 1):
-#     """ Sample n^dim points along a regular grid on [0,box_length]^dim.
+# def sample_grid(n_x, dim=3,x_length = 1, n_y = None, y_length = None, n_z = None, z_length = None):
+#     """ Sample n_x * n_y * n_z points along a regular grid on [0,x_length] * [0,y_length] * [0,z_length].
 #     Used as an empirical measure approximation of the input measure.
     
 #     Input arguments:
-    
-#     n - number of sampled point along each direction (necessary)    
+#     n_x - number of sampled point along x direction (necessary)    
     
 #     dim - dimension (optional, default is 3).
-    
-#     box_length = length of the square box (optional, default is 1)
-#     """
-#     grid_points = torch.linspace(0.5*box_length/n, box_length-0.5*box_length/n, n)
-#     grid_points = torch.stack(
-#         torch.meshgrid((grid_points,) * dim, indexing="ij"), dim=-1
-#     )
-#     grid_points = grid_points.reshape(-1, dim)
-#     return grid_points
 
-# TODO: adaptable pixel sizes
-
-def sample_grid(n_x, dim=3,x_length = 1, n_y = None, y_length = None, n_z = None, z_length = None):
-    """ Sample n_x * n_y * n_z points along a regular grid on [0,x_length] * [0,y_length] * [0,z_length].
-    Used as an empirical measure approximation of the input measure.
+#     x_length - length of the box in x direction (optional, default is x_length = 1)
     
-    Input arguments:
-    n_x - number of sampled point along x direction (necessary)    
+#     n_y - number of sampled points along y direction (optional, default is n_y = n_x)
     
-    dim - dimension (optional, default is 3).
-
-    x_length - length of the box in x direction (optional, default is x_length = 1)
-    
-    n_y - number of sampled points along y direction (optional, default is n_y = n_x)
-    
-    y_length - length of the box in y direction (optional, default is y_length = x_length)
+#     y_length - length of the box in y direction (optional, default is y_length = x_length)
      
-    n_z - number of sampled points along z direction (optional, default is n_z = None if dim = 2 and n_z = n_x if dim = 3)
+#     n_z - number of sampled points along z direction (optional, default is n_z = None if dim = 2 and n_z = n_x if dim = 3)
     
-    z_length = length of the box in z direction (optional, default is z_length = None if dim = 2 and z_length = x_length if dim =2)
-    """
-    if n_y == None:
-        n_y = n_x
+#     z_length = length of the box in z direction (optional, default is z_length = None if dim = 2 and z_length = x_length if dim =2)
+#     """
+#     if n_y == None:
+#         n_y = n_x
     
-    if y_length == None:
-        y_length = x_length
+#     if y_length == None:
+#         y_length = x_length
 
-    if n_z == None and dim == 3:
-        n_z = n_x
+#     if n_z == None and dim == 3:
+#         n_z = n_x
     
-    if z_length == None and dim == 3:
-        z_length = x_length
+#     if z_length == None and dim == 3:
+#         z_length = x_length
     
     
-    grid_points_x = torch.linspace(0.5*x_length/n_x, x_length-0.5*x_length/n_x, n_x)
-    grid_points_y = torch.linspace(0.5*y_length/n_y, y_length-0.5*y_length/n_y, n_y)
-    if dim == 3:
-        grid_points_z = torch.linspace(0.5*z_length/n_z, z_length-0.5*z_length/n_z, n_z)
+#     grid_points_x = torch.linspace(0.5*x_length/n_x, x_length-0.5*x_length/n_x, n_x)
+#     grid_points_y = torch.linspace(0.5*y_length/n_y, y_length-0.5*y_length/n_y, n_y)
+#     if dim == 3:
+#         grid_points_z = torch.linspace(0.5*z_length/n_z, z_length-0.5*z_length/n_z, n_z)
         
-    mesh = torch.meshgrid((grid_points_x,grid_points_y), indexing="ij") if dim == 2 else torch.meshgrid((grid_points_x,grid_points_y,grid_points_z), indexing="ij")
+#     mesh = torch.meshgrid((grid_points_x,grid_points_y), indexing="ij") if dim == 2 else torch.meshgrid((grid_points_x,grid_points_y,grid_points_z), indexing="ij")
     
-    grid_points = torch.stack(mesh, dim=-1)
-    grid_points = grid_points.reshape(-1, dim)
-    volumes_x = (x_length/n_x)
-    volumes_y = (y_length/n_y)
-    if dim == 3:
-        volumes_z = (z_length/n_z)
+#     grid_points = torch.stack(mesh, dim=-1)
+#     grid_points = grid_points.reshape(-1, dim)
+#     volumes_x = (x_length/n_x)
+#     volumes_y = (y_length/n_y)
+#     if dim == 3:
+#         volumes_z = (z_length/n_z)
     
-    PS_x = volumes_x*torch.ones(n_x)
-    PS_y = volumes_y*torch.ones(n_y)
-    if dim == 3:
-        PS_z = volumes_z*torch.ones(n_z)
+#     PS_x = volumes_x*torch.ones(n_x)
+#     PS_y = volumes_y*torch.ones(n_y)
+#     if dim == 3:
+#         PS_z = volumes_z*torch.ones(n_z)
 
-    PS = (PS_x[:, None] @ PS_y[None,:])
-    if dim == 3:
-        PS = PS[:,:,None] @ PS_z[None,:]
+#     PS = (PS_x[:, None] @ PS_y[None,:])
+#     if dim == 3:
+#         PS = PS[:,:,None] @ PS_z[None,:]
     
-    PS = PS.reshape(-1,1).flatten()
+#     PS = PS.reshape(-1,1).flatten()
         
-    return grid_points, PS
+#     return grid_points, PS
 
 
 
-def sample_uniform(n, dim=3):
-    """ Sample n points from a uniform distribution on [0,1]^dim.
-    Used as seed points for the grains. 
+# def sample_uniform(n, dim=3):
+#     """ Sample n points from a uniform distribution on [0,1]^dim.
+#     Used as seed points for the grains. 
     
-    Input arguments:
+#     Input arguments:
     
-    n - number of seed points
+#     n - number of seed points
     
-    dim - dimension (optional, default is dim = 3).
-    """
-    return torch.rand(n, dim)
+#     dim - dimension (optional, default is dim = 3).
+#     """
+#     return torch.rand(n, dim)
 
 def sample_seeds_with_exclusion(n, dim=3,radius_prefactor = 1e-1,number_of_attempts = None, verbose = False):
     """ Sample n points from a uniform distribution on [0,1]^dim, but disregard points too close to each other.
@@ -129,38 +108,38 @@ def sample_seeds_with_exclusion(n, dim=3,radius_prefactor = 1e-1,number_of_attem
         
     return X
 
-def sample_psd_matrices(n, dim=3):
-    """Generate a collection of n unnormalised n random dim x dim positive semi-definite matrices.
-    Used to specify preferred orientation and aspect ratio of each grain.
+# def sample_psd_matrices(n, dim=3):
+#     """Generate a collection of n unnormalised n random dim x dim positive semi-definite matrices.
+#     Used to specify preferred orientation and aspect ratio of each grain.
     
-    Input arguments:
+#     Input arguments:
     
-    n - number of matrices
+#     n - number of matrices
     
-    dim - dimension (optional, default is dim = 3).
-    """
-    a = torch.randn(n, dim, dim)
-    #a = torch.diag_embed(torch.ones(n, dim))
-    a = 0.5 * (a @ a.transpose(-1, -2))
-    assert a.shape == (n, dim, dim)
-    return a
+#     dim - dimension (optional, default is dim = 3).
+#     """
+#     a = torch.randn(n, dim, dim)
+#     #a = torch.diag_embed(torch.ones(n, dim))
+#     a = 0.5 * (a @ a.transpose(-1, -2))
+#     assert a.shape == (n, dim, dim)
+#     return a
 
-def generate_identity_matrices(n,dim=3):
-    """Generate a collection of (dim x dim) identity matrices.
-    Used to specify the isotropy of each grain.
+# def generate_identity_matrices(n,dim=3):
+#     """Generate a collection of (dim x dim) identity matrices.
+#     Used to specify the isotropy of each grain.
     
-    Input arguments:
+#     Input arguments:
     
-    n - number of matrices
+#     n - number of matrices
     
-    dim - dimension (optional, default is dim = 3).
-    """
-    a=torch.stack((torch.eye(dim),)* n)
-    a.reshape(n,dim,dim)
-    return a
+#     dim - dimension (optional, default is dim = 3).
+#     """
+#     a=torch.stack((torch.eye(dim),)* n)
+#     a.reshape(n,dim,dim)
+#     return a
 
-def sample_psd_matrices_perturbed_from_identity(n,dim=3,amp=0.01):
-    """Generate a collection of dim x dim psd matrices.
+def sample_spd_matrices_perturbed_from_identity(n,dim=3,amp=0.01):
+    """Generate a collection of dim x dim spd matrices.
     Used to specify the anisotropy of each grain.
     
     Input arguments:
@@ -178,23 +157,23 @@ def sample_psd_matrices_perturbed_from_identity(n,dim=3,amp=0.01):
     return a
 
 
-def convert_axes_and_angle_to_matrix_2D(a,b,theta):
-    """Given the semi-major and semi-minor axis of an ellipse and an angle orientation, return the  2x2 positive semi-definite matrix associated with it.
-    It can be used to generate 2D normalised anistropy matrices from 2D EBSD data.
+# def convert_axes_and_angle_to_matrix_2D(a,b,theta):
+#     """Given the semi-major and semi-minor axis of an ellipse and an angle orientation, return the  2x2 positive semi-definite matrix associated with it.
+#     It can be used to generate 2D normalised anistropy matrices from 2D EBSD data.
     
-    Input arguments:
+#     Input arguments:
     
-    a - major axis (necessary)
+#     a - major axis (necessary)
     
-    b - minor axis (necessary)
+#     b - minor axis (necessary)
     
-    theta - orientation angle (necessary)
-    """
-    a11 = (1/a**2)*np.cos(theta)**2 + (1/b**2)*np.sin(theta)**2
-    a22 = (1/a**2)*np.sin(theta)**2 + (1/b**2)*np.cos(theta)**2
-    a12 = ((1/a**2) - (1/b**2))*np.cos(theta)*np.sin(theta)
-    A = torch.tensor([[a11, a12], [a12, a22]])
-    return A
+#     theta - orientation angle (necessary)
+#     """
+#     a11 = (1/a**2)*np.cos(theta)**2 + (1/b**2)*np.sin(theta)**2
+#     a22 = (1/a**2)*np.sin(theta)**2 + (1/b**2)*np.cos(theta)**2
+#     a12 = ((1/a**2) - (1/b**2))*np.cos(theta)*np.sin(theta)
+#     A = torch.tensor([[a11, a12], [a12, a22]])
+#     return A
 
 def sample_normalised_spd_matrices(N, dim = 3, ani_thres=0.5):
     """ Generate a collection of n normalised random dim x dim symmetric positive definite matrices.
@@ -352,63 +331,63 @@ def specify_volumes(n,
 
 
 
-def find_centroids(*,D,N,M,X,
-             x_length = 1,
-             y_length = None,
-             z_length = None,
-             A= None, W = None,
-             use_scipy = False,
-             device = "cuda" if torch.cuda.is_available() else "cpu",
-             dt = torch.float32):
-    """
-    Find centroids of an anisotropic power diagram. 
-    Inputs:
-    D - the spatial dimension
-    N - the number of grains
-    M - the number of quadrature points in each direction (M**D quadrature points in total)
-    X - the PyTorch tensor storing seed point positions
-    A - the PyTorch tensor storing the anistropy matrices of grains
-    W - the PyTorch tensor / numPy array storing the weights
-    use_scipy - whether W is passed as an array (optional, default is False)
-    """
-    if y_length == None:
-        y_length = x_length
+# def find_centroids(*,D,N,M,X,
+#              x_length = 1,
+#              y_length = None,
+#              z_length = None,
+#              A= None, W = None,
+#              use_scipy = False,
+#              device = "cuda" if torch.cuda.is_available() else "cpu",
+#              dt = torch.float32):
+#     """
+#     Find centroids of an anisotropic power diagram. 
+#     Inputs:
+#     D - the spatial dimension
+#     N - the number of grains
+#     M - the number of quadrature points in each direction (M**D quadrature points in total)
+#     X - the PyTorch tensor storing seed point positions
+#     A - the PyTorch tensor storing the anistropy matrices of grains
+#     W - the PyTorch tensor / numPy array storing the weights
+#     use_scipy - whether W is passed as an array (optional, default is False)
+#     """
+#     if y_length == None:
+#         y_length = x_length
     
-    if z_length == None and D == 3:
-        z_length = x_length
+#     if z_length == None and D == 3:
+#         z_length = x_length
         
-    Y, PS = sample_grid(M, dim=D, x_length=x_length, y_length=y_length, z_length=z_length)
-    Y = Y.to(device,dtype=dt)
-    PS = PS.to(device,dtype=dt)
+#     Y, PS = sample_grid(M, dim=D, x_length=x_length, y_length=y_length, z_length=z_length)
+#     Y = Y.to(device,dtype=dt)
+#     PS = PS.to(device,dtype=dt)
     
-    if A == None:
-        A = generate_identity_matrices(N,dim=D)
-    # FIX THIS
-    #if W == None:
-    #    W = np.zeros(N) if use_scipy else torch.zeros(N).to(device)
+#     if A == None:
+#         A = generate_identity_matrices(N,dim=D)
+#     # FIX THIS
+#     #if W == None:
+#     #    W = np.zeros(N) if use_scipy else torch.zeros(N).to(device)
     
-    if use_scipy:
-        W = torch.from_numpy(W).to(device=device, dtype=dt)
+#     if use_scipy:
+#         W = torch.from_numpy(W).to(device=device, dtype=dt)
     
-    w = LazyTensor(W.view(N,1,1))
+#     w = LazyTensor(W.view(N,1,1))
     
-    y = LazyTensor(Y.view(1, M**D, D))  # (1,M**D, D)
-    x = LazyTensor(X.view(N, 1, D))  # (N, 1, D)
-    a = LazyTensor(A.view(N, 1, D * D))
+#     y = LazyTensor(Y.view(1, M**D, D))  # (1,M**D, D)
+#     x = LazyTensor(X.view(N, 1, D))  # (N, 1, D)
+#     a = LazyTensor(A.view(N, 1, D * D))
 
-    D_ij = ((y - x) | a.matvecmult(y - x)) - w  # (N, M**D) symbolic LazyTensor
+#     D_ij = ((y - x) | a.matvecmult(y - x)) - w  # (N, M**D) symbolic LazyTensor
 
-    # Find which grain each pixel belongs to
-    grain_indices = D_ij.argmin(dim=0).ravel() # grain_indices[i] is the grain index of the i-th voxel
+#     # Find which grain each pixel belongs to
+#     grain_indices = D_ij.argmin(dim=0).ravel() # grain_indices[i] is the grain index of the i-th voxel
     
-    new_X0 = torch.bincount(grain_indices,Y[:,0],minlength=N)
-    new_X1 = torch.bincount(grain_indices,Y[:,1],minlength=N)
+#     new_X0 = torch.bincount(grain_indices,Y[:,0],minlength=N)
+#     new_X1 = torch.bincount(grain_indices,Y[:,1],minlength=N)
     
-    normalisation = torch.bincount(grain_indices,minlength=N)
-    if D == 3:
-        new_X2 = torch.bincount(grain_indices,Y[:,2],minlength=N)
-        return torch.stack([new_X0/normalisation, new_X1/normalisation,new_X2/normalisation],dim=1)
-    else:
-        return torch.stack([new_X0/normalisation, new_X1/normalisation],dim=1)
+#     normalisation = torch.bincount(grain_indices,minlength=N)
+#     if D == 3:
+#         new_X2 = torch.bincount(grain_indices,Y[:,2],minlength=N)
+#         return torch.stack([new_X0/normalisation, new_X1/normalisation,new_X2/normalisation],dim=1)
+#     else:
+#         return torch.stack([new_X0/normalisation, new_X1/normalisation],dim=1)
 
     
