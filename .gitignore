@@ -1,0 +1,7 @@
+*.ipynb_checkpoints/
+
+PyPolyCrystals.egg-info/
+
+**/__pycache__/
+
+.tmp.*
