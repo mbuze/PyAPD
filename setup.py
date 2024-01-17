@@ -1,16 +1,17 @@
 from setuptools import setup, find_packages
 
+# read the contents of your README file
+from pathlib import Path
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.md").read_text()
+
 setup(
     name='PyAPD',
-    version='0.0.3',
+    version='0.0.4',
     author='Maciej Buze, Steve Roper, David Bourne',
     author_email='maciej.buze@gmail.com',
     description='A Python library for generating (optimal) anisotropic power diagrams',
-    long_description="""
-        A Python library for computing (optimal) anisotropic power diagrams using GPU acceleration.
-        Current main application concerns geometric modelling of polycrystalline materials
-        with curved boundaries with grains of prescribed volumes and fine control over aspect ratio and location of the grains.
-    """,
+    long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/mbuze/PyAPD",
     packages=find_packages(),
