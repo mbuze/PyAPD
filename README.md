@@ -11,9 +11,20 @@ __Install with pip:__
 ## Example usage
 See `/notebooks/tutorials/example_usage.ipynb`  [![nbviewer](https://raw.githubusercontent.com/jupyter/design/master/logos/Badges/nbviewer_badge.svg)](https://nbviewer.org/github/mbuze/PyAPD/blob/main/notebooks/tutorials/example_usage.ipynb)
 
+### Google Colab
+
 To quickly test the speed of the GPU-acceleration, you can play around with the notebook `example_usage.ipynb` in Google Colab [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mbuze/PyAPD/blob/main/notebooks/tutorials/example_usage.ipynb). 
 
-Note that by default the Google Colab runtime is CPU-only, to change to a GPU runtime, go to `Runtime > Change runtime type` and click on `T4 GPU`. Note that  `T4 GPU` is considered pretty slow and is provided by Google Colab free of charge. To access the gold standard `A100 GPU` via Google Colab, a subscription is required.   
+Note that by default the Google Colab runtime is CPU-only and it leads to a CUDA error when loading `import PyAPD`
+```
+OSError: libcuda.so.1: cannot open shared object file: No such file or directory
+```
+To change to a GPU runtime, go to `Runtime > Change runtime type` and click on `T4 GPU`. Note that  `T4 GPU` is considered pretty slow and is provided by Google Colab free of charge. To access the gold standard `A100 GPU` via Google Colab, a subscription is required. Note that this issue should not appear locally -- if your local machine does not have Cuda libraries (e.g. you do not have a GPU), we simply get a warning 
+```
+[KeOps] Warning : Cuda libraries were not detected on the system ; using cpu only mode
+```
+
+but the library can be loaded.
 
 ## Paper examples
 
@@ -37,7 +48,7 @@ The examples presented in the paper can be found in `/notebooks/paper_examples`,
 
 ## Citing this work
 
-If you use `PyAPD` for academic research, you may cite the paper to which our library is tied to:
+If you use `PyAPD` for academic research, you may cite the paper to which our library is tied as follows.
 ```
 BIBTEX ENTRY TO BE ADDED HERE SOON
 ```
