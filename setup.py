@@ -4,7 +4,7 @@ setup(
     name='PyAPD',
     version='0.0.1',
     author='Maciej Buze',
-    author_email='maciej.buze@gmail.com'
+    author_email='maciej.buze@gmail.com',
     description='A Python library for generating (optimal) anisotropic power diagrams',
     packages=find_packages(),
         classifiers=[
