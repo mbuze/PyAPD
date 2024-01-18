@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='PyAPD',
-    version='0.0.7',
+    version='0.0.9',
     author='Maciej Buze, Steve Roper, David Bourne',
     author_email='maciej.buze@gmail.com',
     description='A Python library for generating (optimal) anisotropic power diagrams',
@@ -21,7 +21,7 @@ setup(
         'Operating System :: OS Independent',
     ],
     install_requires=[
-        "numpy", "pykeops", "torch", "pytorch-minimize", "matplotlib"
+        "numpy", "pykeops", "torch", "pytorch-minimize", "matplotlib", "scipy"
     ],
     python_requires='>=3.6',
 )
