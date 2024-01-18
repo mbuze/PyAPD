@@ -157,23 +157,23 @@ def sample_spd_matrices_perturbed_from_identity(n,dim=3,amp=0.01):
     return a
 
 
-# def convert_axes_and_angle_to_matrix_2D(a,b,theta):
-#     """Given the semi-major and semi-minor axis of an ellipse and an angle orientation, return the  2x2 positive semi-definite matrix associated with it.
-#     It can be used to generate 2D normalised anistropy matrices from 2D EBSD data.
+def convert_axes_and_angle_to_matrix_2D(a,b,theta):
+    """Given the semi-major and semi-minor axis of an ellipse and an angle orientation, return the  2x2 positive semi-definite matrix associated with it.
+    It can be used to generate 2D normalised anistropy matrices from 2D EBSD data.
     
-#     Input arguments:
+    Input arguments:
     
-#     a - major axis (necessary)
+    a - major axis (necessary)
     
-#     b - minor axis (necessary)
+    b - minor axis (necessary)
     
-#     theta - orientation angle (necessary)
-#     """
-#     a11 = (1/a**2)*np.cos(theta)**2 + (1/b**2)*np.sin(theta)**2
-#     a22 = (1/a**2)*np.sin(theta)**2 + (1/b**2)*np.cos(theta)**2
-#     a12 = ((1/a**2) - (1/b**2))*np.cos(theta)*np.sin(theta)
-#     A = torch.tensor([[a11, a12], [a12, a22]])
-#     return A
+    theta - orientation angle (necessary)
+    """
+    a11 = (1/a**2)*np.cos(theta)**2 + (1/b**2)*np.sin(theta)**2
+    a22 = (1/a**2)*np.sin(theta)**2 + (1/b**2)*np.cos(theta)**2
+    a12 = ((1/a**2) - (1/b**2))*np.cos(theta)*np.sin(theta)
+    A = torch.tensor([[a11, a12], [a12, a22]])
+    return A
 
 def sample_normalised_spd_matrices(N, dim = 3, ani_thres=0.5):
     """ Generate a collection of n normalised random dim x dim symmetric positive definite matrices.
