@@ -19,9 +19,15 @@ Note that by default the Google Colab runtime is CPU-only and it leads to a CUDA
 ```
 OSError: libcuda.so.1: cannot open shared object file: No such file or directory
 ```
-To change to a GPU runtime, go to `Runtime > Change runtime type` and click on `T4 GPU`. Note that  `T4 GPU` is considered pretty slow and is provided by Google Colab free of charge. To access the gold standard `A100 GPU` via Google Colab, a subscription is required. 
+To change to a GPU runtime, go to `Runtime > Change runtime type` and click on `T4 GPU`. Note that `T4 GPU` is considered pretty slow and is provided by Google Colab free of charge. To access the gold standard `A100 GPU` via Google Colab, a subscription is required.
 
-Note that the above error should not appear locally -- if your local machine does not have Cuda libraries (e.g. you do not have a GPU), you should expect a warning 
+If after switching to `T4 GPU` runtime you get a `PyKeOps` error:
+```
+UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 504341: ordinal not in range(128)
+```
+please go click on `Runtime > Restart session and run all`, which seems to make the issue go away. 
+
+Note that such issues should not appear locally -- e.g. if your local machine does not have Cuda libraries (e.g. you do not have a GPU), you should expect a warning 
 ```
 [KeOps] Warning : Cuda libraries were not detected on the system ; using cpu only mode
 ```
