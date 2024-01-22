@@ -25,7 +25,7 @@ If after switching to `T4 GPU` runtime you get a `PyKeOps` error:
 ```
 UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 504341: ordinal not in range(128)
 ```
-please go click on `Runtime > Restart session and run all`, which seems to make the issue go away. 
+please click on `Runtime > Restart session and run all`, which seems to make the issue go away. 
 
 Note that such issues should not appear locally -- e.g. if your local machine does not have Cuda libraries (e.g. you do not have a GPU), you should expect a warning 
 ```
