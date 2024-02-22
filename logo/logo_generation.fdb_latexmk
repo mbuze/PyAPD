@@ -1,8 +1,8 @@
 # Fdb version 4
-["pdflatex"] 1708344401 "/home/mb/MEGAsync/academic_work/projects/geometric_model_polycrystals/code/PyAPD/logo/logo_generation.tex" "logo_generation.pdf" "logo_generation" 1708344402 0
-  "/dev/null" 1708332160 0 d41d8cd98f00b204e9800998ecf8427e ""
+["pdflatex"] 1708618744 "/home/mb/MEGAsync/academic_work/projects/geometric_model_polycrystals/code/PyAPD/logo/logo_generation.tex" "logo_generation.pdf" "logo_generation" 1708618744 0
+  "/dev/null" 1708592331 0 d41d8cd98f00b204e9800998ecf8427e ""
   "/home/mb/.texlive2021/texmf-var/web2c/pdftex/pdflatex.fmt" 1686586597 2726965 806cd2fe143450d51e35e6ddb5917d60 ""
-  "/home/mb/MEGAsync/academic_work/projects/geometric_model_polycrystals/code/PyAPD/logo/logo_generation.tex" 1708344401 508 f22c2382a469bb3eeedb659b5e87e212 ""
+  "/home/mb/MEGAsync/academic_work/projects/geometric_model_polycrystals/code/PyAPD/logo/logo_generation.tex" 1708618744 568 a4189dcf21022966af6dcf8fedada3aa ""
   "/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii" 1685109884 71627 94eb9990bed73c364d7f53f960cc8c5b ""
   "/usr/share/texlive/texmf-dist/tex/generic/iftex/ifluatex.sty" 1572645307 492 1994775aa15b0d1289725a0b1bbc2d4c ""
   "/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty" 1583617216 6501 4011d89d9621e0b0901138815ba5ff29 ""
@@ -39,8 +39,8 @@
   "abstract-1.pdf" 1708343467 1415 786bdb7ef74c4b2837ffe739a02531fc ""
   "abstract-2.pdf" 1708343475 1453 957286b5d34eae07a5a6c71bf7039ed5 ""
   "abstract-3.png" 1708343481 685592 222822f9d60a4eff45c787900c0b85b7 ""
-  "logo_generation.aux" 1708344402 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
-  "logo_generation.tex" 1708344401 508 f22c2382a469bb3eeedb659b5e87e212 ""
+  "logo_generation.aux" 1708618744 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "logo_generation.tex" 1708618744 568 a4189dcf21022966af6dcf8fedada3aa ""
   (generated)
   "logo_generation.aux"
   "logo_generation.log"

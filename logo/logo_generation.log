@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021/CVE-2023-32700 patched) (preloaded format=pdflatex 2023.6.12)  19 FEB 2024 12:06
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021/CVE-2023-32700 patched) (preloaded format=pdflatex 2023.6.12)  22 FEB 2024 16:19
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -96,20 +96,20 @@ File: l3backend-pdftex.def 2021-05-07 L3 backend support: PDF output (pdfTeX)
 ) (./logo_generation.aux)
 \openout1 = `logo_generation.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 3.
-LaTeX Font Info:    ... okay on input line 3.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 3.
-LaTeX Font Info:    ... okay on input line 3.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 3.
-LaTeX Font Info:    ... okay on input line 3.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 3.
-LaTeX Font Info:    ... okay on input line 3.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 3.
-LaTeX Font Info:    ... okay on input line 3.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 3.
-LaTeX Font Info:    ... okay on input line 3.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 3.
-LaTeX Font Info:    ... okay on input line 3.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
  (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count266
@@ -153,22 +153,22 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 <abstract-1.pdf, id=1, 29.05856pt x 29.05856pt>
 File: abstract-1.pdf Graphic file (type pdf)
 <use abstract-1.pdf>
-Package pdftex.def Info: abstract-1.pdf  used on input line 6.
+Package pdftex.def Info: abstract-1.pdf  used on input line 7.
 (pdftex.def)             Requested size: 103.50105pt x 103.51414pt.
 <abstract-2.pdf, id=2, 29.05856pt x 29.05856pt>
 File: abstract-2.pdf Graphic file (type pdf)
 <use abstract-2.pdf>
-Package pdftex.def Info: abstract-2.pdf  used on input line 9.
+Package pdftex.def Info: abstract-2.pdf  used on input line 10.
 (pdftex.def)             Requested size: 103.50105pt x 103.51414pt.
 <abstract-3.png, id=3, 504.38437pt x 528.47438pt>
 File: abstract-3.png Graphic file (type png)
 <use abstract-3.png>
-Package pdftex.def Info: abstract-3.png  used on input line 12.
+Package pdftex.def Info: abstract-3.png  used on input line 13.
 (pdftex.def)             Requested size: 98.32626pt x 103.0158pt.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 21.
+(Font)              <7> on input line 23.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 21.
+(Font)              <5> on input line 23.
  [1
 
  <./abstract-1.pdf> <./abstract-2.pdf
@@ -178,13 +178,13 @@ pdfTeX warning: pdflatex (file ./abstract-2.pdf): PDF inclusion: multiple pdfs w
 Here is how much of TeX's memory you used:
  2357 strings out of 478862
  38387 string characters out of 5858922
- 329556 words of memory out of 6000000
+ 329585 words of memory out of 6000000
  19970 multiletter control sequences out of 15000+600000
  403430 words of font info for 27 fonts, out of 8000000 for 9000
  1137 hyphenation exceptions out of 8191
- 70i,8n,76p,322b,285s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 70i,8n,76p,327b,285s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on logo_generation.pdf (1 page, 520250 bytes).
+Output written on logo_generation.pdf (1 page, 520255 bytes).
 PDF statistics:
  16 PDF objects out of 1000 (max. 8388607)
  8 compressed objects within 1 object stream
