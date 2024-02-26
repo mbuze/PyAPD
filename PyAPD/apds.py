@@ -251,6 +251,8 @@ class apd_system:
             for i in range(0,len(Ell_rot_shifted)):
                 ax1.scatter(self.X.cpu()[i,0],self.X.cpu()[i,1],c='r',s=3)
                 ax1.plot(Ell_rot_shifted[i].cpu()[:,0],Ell_rot_shifted[i].cpu()[:,1],c='k')
+            ax1.set_xlim(apd1.domain[0]) 
+            ax1.set_ylim(apd1.domain[1]) 
             return fig, ax1
             
         
@@ -357,7 +359,7 @@ class apd_system:
             self.time_to_find_W = time_taken
         
         
-    def adjust_X(self,backend="auto"):
+    def adjust_X_As(self,backend="auto",adjust_As = False):
         if not self.optimality:
             print("Find optimal W first!")
         else:
@@ -367,17 +369,35 @@ class apd_system:
             new_X1 = torch.bincount(grain_indices, self.Y[:,1], minlength = self.N)
 
             normalisation = torch.bincount(grain_indices,minlength=self.N)
+            
             if self.D == 3:
                 new_X2 = torch.bincount(grain_indices,Y[:,2],minlength=N)
                 self.X = torch.stack([new_X0/normalisation, new_X1/normalisation,new_X2/normalisation],dim=1)
             else:
                 self.X = torch.stack([new_X0/normalisation, new_X1/normalisation],dim=1)
 
+            if adjust_As:
+                YY_XX_new = apd1.Y - apd1.X[grain_indices]
+                tensor_prod = torch.einsum('bc,bd->bcd', YY_XX_new, YY_XX_new)
+                a00 = torch.bincount(grain_indices, tensor_prod[:,0,0], minlength=apd1.N)
+                a01 = torch.bincount(grain_indices, tensor_prod[:,0,1], minlength=apd1.N)
+                a11 = torch.bincount(grain_indices, tensor_prod[:,1,1], minlength=apd1.N)
+                As0_new = torch.stack([4.0*a00/normalisation, 4.0*a01/normalisation],dim=1)
+                As1_new = torch.stack([4.0*a01/normalisation, 4.0*a11/normalisation],dim=1)
+                As_new = torch.linalg.inv(torch.stack([As0_new, As1_new],dim=1))
+                ee,vv = torch.linalg.eigh(As_new)
+                ratios = ee[:,1] / ee[:,0]
+                major_axes = torch.sqrt(ratios)
+                minor_axes = 1/major_axes
+                ee_normalised = torch.stack([major_axes,minor_axes],dim=1)
+                self.As = (vv @ torch.diag_embed(ee_normalised) @ vv.mT.conj())
+                self.a = LazyTensor(self.As.view(self.N, 1, self.D * self.D))
+
             self.optimality = False
             self.x = LazyTensor(self.X.view(self.N, 1, self.D))
             
             
-    def Lloyds_algorithm(self,K=5, verbosity_level = 1, backend = "auto"):
+    def Lloyds_algorithm(self,K=5, verbosity_level = 1, backend = "auto",adjust_As = False):
         for k in range(K):
             if verbosity_level > 0:
                 print("Lloyds iteration:", k)
@@ -385,5 +405,5 @@ class apd_system:
             verbose = True if verbosity_level == 2 else False
             self.find_optimal_W(verbose = verbose)
             self.check_optimality()
-            self.adjust_X(backend = backend)
+            self.adjust_X_As(backend = backend, adjust_As = adjust_As)
         
