@@ -251,8 +251,8 @@ class apd_system:
             for i in range(0,len(Ell_rot_shifted)):
                 ax1.scatter(self.X.cpu()[i,0],self.X.cpu()[i,1],c='r',s=3)
                 ax1.plot(Ell_rot_shifted[i].cpu()[:,0],Ell_rot_shifted[i].cpu()[:,1],c='k')
-            ax1.set_xlim(apd1.domain[0]) 
-            ax1.set_ylim(apd1.domain[1]) 
+            ax1.set_xlim(self.domain[0]) 
+            ax1.set_ylim(self.domain[1]) 
             return fig, ax1
             
         
