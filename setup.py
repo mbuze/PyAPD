@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='PyAPD',
-    version='0.0.14',
+    version='0.0.15',
     author='Maciej Buze, Steve Roper, David Bourne',
     author_email='maciej.buze@gmail.com',
     description='A Python library for generating (optimal) anisotropic power diagrams',

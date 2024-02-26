@@ -377,11 +377,11 @@ class apd_system:
                 self.X = torch.stack([new_X0/normalisation, new_X1/normalisation],dim=1)
 
             if adjust_As:
-                YY_XX_new = apd1.Y - self.X[grain_indices]
+                YY_XX_new = self.Y - self.X[grain_indices]
                 tensor_prod = torch.einsum('bc,bd->bcd', YY_XX_new, YY_XX_new)
-                a00 = torch.bincount(grain_indices, tensor_prod[:,0,0], minlength=apd1.N)
-                a01 = torch.bincount(grain_indices, tensor_prod[:,0,1], minlength=apd1.N)
-                a11 = torch.bincount(grain_indices, tensor_prod[:,1,1], minlength=apd1.N)
+                a00 = torch.bincount(grain_indices, tensor_prod[:,0,0], minlength=self.N)
+                a01 = torch.bincount(grain_indices, tensor_prod[:,0,1], minlength=self.N)
+                a11 = torch.bincount(grain_indices, tensor_prod[:,1,1], minlength=self.N)
                 As0_new = torch.stack([4.0*a00/normalisation, 4.0*a01/normalisation],dim=1)
                 As1_new = torch.stack([4.0*a01/normalisation, 4.0*a11/normalisation],dim=1)
                 As_new = torch.linalg.inv(torch.stack([As0_new, As1_new],dim=1))
