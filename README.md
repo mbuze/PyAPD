@@ -1,4 +1,4 @@
-![logo](/logo/logo.png)
+![Logo](https://raw.githubusercontent.com/mbuze/PyAPD/main/logo/logo.png)
 
 # PyAPD	
 
