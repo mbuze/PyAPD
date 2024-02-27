@@ -371,7 +371,7 @@ class apd_system:
             normalisation = torch.bincount(grain_indices,minlength=self.N)
             
             if self.D == 3:
-                new_X2 = torch.bincount(grain_indices,self.Y[:,2],minlength=N)
+                new_X2 = torch.bincount(grain_indices,self.Y[:,2],minlength=self.N)
                 self.X = torch.stack([new_X0/normalisation, new_X1/normalisation,new_X2/normalisation],dim=1)
             else:
                 self.X = torch.stack([new_X0/normalisation, new_X1/normalisation],dim=1)
