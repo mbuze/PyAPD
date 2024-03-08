@@ -17,29 +17,19 @@ See `/notebooks/tutorials/example_usage.ipynb`  [![nbviewer](https://raw.githubu
 
 To quickly test the speed of the GPU-acceleration, you can play around with the notebook `example_usage.ipynb` in Google Colab [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mbuze/PyAPD/blob/main/notebooks/tutorials/example_usage.ipynb). 
 
-Note that by default the Google Colab runtime is CPU-only and it leads to a CUDA error when loading `import PyAPD`
-```
-OSError: libcuda.so.1: cannot open shared object file: No such file or directory
-```
-To change to a GPU runtime, go to `Runtime > Change runtime type` and click on `T4 GPU`. Note that `T4 GPU` is considered pretty slow and is provided by Google Colab free of charge. To access the gold standard `A100 GPU` via Google Colab, a subscription is required.
+Note that by default the Google Colab runtime is CPU-only. To change to a GPU runtime, go to `Runtime > Change runtime type` and click on `T4 GPU`. Note that `T4 GPU` is considered pretty slow and is provided by Google Colab free of charge. To access the gold standard `A100 GPU` via Google Colab, a subscription is required.
 
-If after switching to `T4 GPU` runtime you get a `PyKeOps` error:
-```
-UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 504341: ordinal not in range(128)
-```
-please click on `Runtime > Restart session and run all`, which seems to make the issue go away. 
-
-Note that such issues should not appear locally -- e.g. if your local machine does not have Cuda libraries (e.g. you do not have a GPU), you should expect a warning 
+For local use, if you do not have a GPU, you should expect a warning 
 ```
 [KeOps] Warning : Cuda libraries were not detected on the system ; using cpu only mode
 ```
-but the library can be loaded.
+but the library is fully functional. 
 
 ## Paper examples
 
 This library is accompanied by the paper  
 
-- M. Buze, J. Feydy, S.M. Roper, K. Sedighiani, D.P. Bourne (2024). Anisotropic power diagrams for polycrystal modeling: efficient generation of curved grains via optimal transport. (DETAILS TO BE UPDATED SOON)
+- M. Buze, J. Feydy, S.M. Roper, K. Sedighiani, D.P. Bourne (2024). Anisotropic power diagrams for polycrystal modeling: efficient generation of curved grains via optimal transport. arXiv e-prints 2403.03571, 2024. [LINK](https://arxiv.org/abs/2403.03571)
 
 The examples presented in the paper can be found in `/notebooks/paper_examples`, which includes all the Jupyter notebooks as they were run, the data that was generated and the plots from the paper. For the ease of access, here we list them with links to view them statically in NBViewer and also a link to an interactive version in Google Colab. Note that the notebooks relying the loading of data will not work out of the box in Google Colab -- the relevant data will have to be loaded manually. 
 - Runtime tests
@@ -57,8 +47,22 @@ The examples presented in the paper can be found in `/notebooks/paper_examples`,
 
 ## Citing this work
 
-If you use `PyAPD` for academic research, you may cite the paper to which our library is tied as follows.
+If you use `PyAPD` for academic research, you may cite the paper to which our library is tied as follows (preprint version for now).
 ```
-BIBTEX ENTRY TO BE ADDED HERE SOON
+@misc{pyapd2024,
+      title={Anisotropic power diagrams for polycrystal modelling: efficient generation of curved grains via optimal transport}, 
+      author={Maciej Buze and Jean Feydy and Steven M. Roper and Karo Sedighiani and David P. Bourne},
+      year={2024},
+      eprint={2403.03571},
+      archivePrefix={arXiv},
+      primaryClass={cond-mat.mtrl-sci}
+}
 ```
+
+## Related projects
+
+* [DREAM.3D](https://github.com/BlueQuartzSoftware/DREAM3D)
+* [Kanapy](https://github.com/ICAMS/Kanapy)
+* [Neper](https://github.com/neperfepx/neper)
+* [LPM: Laguerre-Polycrystalline-Microstructures](https://github.com/DPBourne/Laguerre-Polycrystalline-Microstructures)
 

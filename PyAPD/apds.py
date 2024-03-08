@@ -150,7 +150,7 @@ class apd_system:
             pixel_params = (M,)*self.D    
         self.pixel_params = pixel_params
         if verbose:
-            print("M = ",M)
+            print("M = ",pixel_params)
 
               
 
