@@ -54,8 +54,8 @@ class apd_system:
         self.set_X(X)
         
         self.set_As(As)
+        self.set_Ids()
         self.set_target_masses(target_masses)
-        
         self.set_W(W)
         
         self.set_pixel_params(pixel_params)
@@ -99,6 +99,22 @@ class apd_system:
 
         self.X = X.to(device=self.device, dtype=self.dt)
         self.x = LazyTensor(self.X.view(self.N, 1, self.D))  # (N, 1, D)
+        
+
+    def set_Ids(self, Ids = None):
+        """
+        TODO: add description.
+        """
+        if Ids is None:
+            if not ( self.seed == -1):
+                torch.manual_seed(100+self.seed)
+            if self.det_constraint:
+                Ids = sample_normalised_spd_matrices(self.N,dim=self.D,ani_thres = 0.0)
+            else:
+                Ids = sample_psd_matrices_perturbed_from_identity(self.N,dim=self.D,amp = 0.0)
+        
+        self.Ids = Ids.to(device=self.device, dtype=self.dt)
+        self.ids = LazyTensor(self.Ids.view(self.N, 1, self.D * self.D))
         
 
     def set_As(self, As = None):
@@ -152,10 +168,6 @@ class apd_system:
         if verbose:
             print("M = ",pixel_params)
 
-              
-
-        
-
     
     def assemble_pixels(self):
         """
@@ -197,14 +209,18 @@ class apd_system:
         
                     
     def assemble_apd(self,record_time = False,verbose=False,
-                    color_by = None, backend = "auto"):
+                    color_by = None, backend = "auto", t = 1.0):
         """
         Assemble the apd by finding which grain each pixels belongs to.
         """
         if self.Y is None:
             self.assemble_pixels()
         start=time.time()
-        D_ij = ((self.y - self.x) | self.a.matvecmult(self.y - self.x)) - self.w
+        if t == 1.0:
+            D_ij = ((self.y - self.x) | self.a.matvecmult(self.y - self.x)) - self.w
+        else:
+            a_t = t*self.a + (1-t)*self.ids
+            D_ij = ((self.y - self.x) | a_t.matvecmult(self.y - self.x)) - self.w
         # Find which grain each pixel belongs to
         grain_indices = D_ij.argmin(dim=0,backend=backend).ravel() # grain_indices[i] is the grain index of the i-th voxel
         time_taken = time.time()-start
@@ -218,20 +234,24 @@ class apd_system:
         else:
             return grain_indices#.reshape(self.pixel_params)
     
-    def plot_apd(self, color_by = None):
+    def plot_apd(self, color_by = None, t = 1.0):
         """
         Plot the APD (for now only in 2D). 
         """
         if self.D == 2:
-            img = self.assemble_apd(color_by=color_by).reshape(self.pixel_params).transpose(0,1).cpu()
+            img = self.assemble_apd(color_by=color_by,t = t).reshape(self.pixel_params).transpose(0,1).cpu()
             fig, (ax1) = plt.subplots(1,1)
             fig.set_size_inches(10.5, 10.5, forward=True)
             ax1.imshow(img, origin='lower', extent = torch.flatten( self.domain ).tolist())
             return fig, ax1
         
-    def plot_ellipses(self):
+    def plot_ellipses(self, t = 1.0):
+        A_t = self.As
+        if not t == 1.0:
+            A_t = t*self.As + (1-t)*self.Ids
+        
         if self.D == 2:
-            decomp = torch.linalg.eigh(self.As)
+            decomp = torch.linalg.eigh(A_t)
             AB = decomp.eigenvalues**(-0.5)
             scaling = (self.target_masses/torch.pi)**(1/2)
             AB[:,0] = AB[:,0] * scaling
@@ -278,7 +298,43 @@ class apd_system:
         sD_ij = torch.einsum('bj,bj->b',MV,ind_select) - torch.index_select(self.W, 0, idx)
         g=-torch.dot(self.target_masses,self.W)-torch.dot(sD_ij,self.PS)
         return g
-    
+
+    def OT_dual_function_cont(self, W, t = 1.0, backend = "auto"):
+        """
+        Helper function for assembling the OT dual function g(W).
+        """
+        #if not ( W is None ):
+        self.W = W
+        self.w = LazyTensor(self.W.view(self.N,1,1))
+
+        a_t = t*self.a + (1-t)*self.ids
+        A_t = t*self.As + (1-t)*self.Ids
+        D_ij = ((self.y - self.x) | a_t.matvecmult(self.y - self.x)) - self.w
+        idx = D_ij.argmin(dim=0,backend=backend).view(-1)
+        ind_select = torch.index_select(self.X,0,idx)-self.Y
+        MV = torch.einsum('bij,bj->bi', torch.index_select(A_t,0,idx), ind_select)
+        sD_ij = torch.einsum('bj,bj->b',MV,ind_select) - torch.index_select(self.W, 0, idx)
+        g=-torch.dot(self.target_masses,self.W)-torch.dot(sD_ij,self.PS)
+        return g
+
+    def OT_dual_function_cont2(self, W, t = 1.0, backend = "auto"):
+        """
+        Helper function for assembling the OT dual function g(W).
+        """
+        #if not ( W is None ):
+        self.W = W
+        self.w = LazyTensor(self.W.view(self.N,1,1))
+
+        a_t = t*self.a + (1-t)*self.ids
+        A_t = t*self.As + (1-t)*self.Ids
+        D_ij = ((self.y - self.x) | a_t.matvecmult(self.y - self.x)) - self.w
+        idx = D_ij.argmin(dim=0,backend=backend).view(-1)
+        ind_select = torch.index_select(self.X,0,idx)-self.Y
+        MV = torch.einsum('bij,bj->bi', torch.index_select(A_t,0,idx), ind_select)
+        sD_ij = torch.einsum('bj,bj->b',MV,ind_select) - torch.index_select(self.W, 0, idx)
+        g=-torch.dot(self.target_masses,self.W)-torch.dot(sD_ij,self.PS)
+        print(t)
+        return g + 100.0*(t-1.0)**2
     
     def check_optimality(self,
                          error_wrt_each_grain = True,
@@ -357,7 +413,152 @@ class apd_system:
         self.w = LazyTensor(self.W.view(self.N,1,1))
         if record_time:
             self.time_to_find_W = time_taken
+
+    def find_optimal_W2(self,
+                       record_time = False,
+                       error_wrt_each_grain = True,
+                       solver = None,
+                       verbose = True,
+                       backend = "auto",
+                             **kwargs):
+        """
+        Find the set of weights W for which the APD generated by (X,As,W) is optimal with respect to target masses. 
+        """
+        if error_wrt_each_grain:
+            vol_tol = (self.error_tolerance)*self.target_masses
+            if verbose:
+                print("Solver tolerance is with respect to each grain separately.")
+                print("Smallest tol: ", torch.min(vol_tol))
+        else:
+            vol_tol = self.error_tolerance*torch.min(self.target_masses)
+            if verbose:
+                print("Solver tolerance is with respect to the smallest grain.")
+                print("Tolerance: ", vol_tol)
+
         
+        defaultKwargs = {}
+        if solver is None:
+            solver = 'bfgs'
+            defaultKwargs = {'gtol': vol_tol, 'xtol': 0, 'disp': 1 if verbose else 0, 'max_iter':1000}
+
+            
+        fun = lambda X : self.OT_dual_function_cont2(W=X[:-1],t=X[-1],backend=backend)
+        
+        # Solve the optimisation problem
+        kwargs = { **defaultKwargs, **kwargs }
+        
+        start=time.time()
+        X0 = torch.cat((self.W,torch.tensor([0.0])))
+        res = minimize_torch(fun, X0, method=solver, disp= 1 if verbose else 0,
+                             options=kwargs)
+        time_taken = time.time()-start
+        if verbose:
+            print('It took',time_taken, "seconds to find optimal W.")
+        
+        XX=res.x
+        
+        self.W = XX[:-1]
+        self.w = LazyTensor(self.W.view(self.N,1,1))
+        print('t = ', XX[-1])
+        if record_time:
+            self.time_to_find_W = time_taken
+
+    def from_t_to_W(self,t,
+                    record_time = False,
+                    error_wrt_each_grain = True,
+                    error_prefactor = 1.0,
+                    solver = None,
+                    verbose = True,
+                    backend = "auto",
+                             **kwargs):
+        if error_wrt_each_grain:
+            vol_tol = error_prefactor*(self.error_tolerance)*self.target_masses
+            if verbose:
+                print("Solver tolerance is with respect to each grain separately.")
+                print("Smallest tol: ", torch.min(vol_tol))
+        else:
+            vol_tol = error_prefactor*self.error_tolerance*torch.min(self.target_masses)
+            if verbose:
+                print("Solver tolerance is with respect to the smallest grain.")
+                print("Tolerance: ", vol_tol)
+    
+        defaultKwargs = {}
+        if solver is None:
+            solver = 'bfgs'
+            defaultKwargs = {'gtol': vol_tol, 'xtol': 0, 'disp': 1 if verbose else 0, 'max_iter':1000}
+
+        fun = lambda W : self.OT_dual_function_cont(W=W,t=t)
+
+        # Solve the optimisation problem
+        kwargs = { **defaultKwargs, **kwargs }
+        
+        start=time.time()
+        res = minimize_torch(fun, self.W, method=solver, disp= 1 if verbose else 0,
+                            options=kwargs)
+        time_taken = time.time()-start
+        if verbose:
+            print('It took',time_taken, "seconds to find optimal W.")
+        
+        W=res.x
+        self.W = W
+        self.w = LazyTensor(self.W.view(self.N,1,1))
+        if record_time:
+            self.time_to_find_W = time_taken
+
+    
+    def continuation_routine(self,
+                             steps=10,
+                             tangent_info=True,
+                             record_time = False,
+                             error_wrt_each_grain = True,
+                             error_prefactor = 1.0,
+                             solver = None,
+                             verbose = True,
+                             backend = "auto",
+                             **kwargs):
+        self.from_t_to_W(0.0,
+                        record_time = record_time,
+                        error_wrt_each_grain = error_wrt_each_grain,
+                        error_prefactor = error_prefactor,
+                        solver = solver,
+                        verbose = verbose,
+                        backend = backend,
+                        **kwargs)
+        W_old = self.W
+        self.from_t_to_W(1/steps,
+                        record_time = record_time,
+                        error_wrt_each_grain = error_wrt_each_grain,
+                        error_prefactor = error_prefactor,
+                        solver = solver,
+                        verbose = verbose,
+                        backend = backend,
+                        **kwargs)
+        W_new = self.W
+        
+        if tangent_info:
+            for i in range(2,steps+1):
+                self.set_W(W = 2*W_new - W_old)
+                W_old = W_new
+                self.from_t_to_W(i/steps,
+                                record_time = record_time,
+                                error_wrt_each_grain = error_wrt_each_grain,
+                                error_prefactor = error_prefactor,
+                                solver = solver,
+                                verbose = verbose,
+                                backend = backend,
+                                **kwargs)
+                W_new = self.W
+        else:
+            for i in range(2,steps+1):
+                self.from_t_to_W(i/steps,
+                                record_time = record_time,
+                                error_wrt_each_grain = error_wrt_each_grain,
+                                error_prefactor = error_prefactor,
+                                solver = solver,
+                                verbose = verbose,
+                                backend = backend,
+                                **kwargs)
+
         
     def adjust_X_As(self,backend="auto",adjust_As = False):
         if not self.optimality:

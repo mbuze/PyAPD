@@ -6,7 +6,7 @@ from pykeops.torch import LazyTensor
 import torchmin
 
 from torchmin.function import ScalarFunction
-from torchmin.bfgs import BFGS
+from torchmin.bfgs import BFGS, L_BFGS
 from torchmin.line_search import strong_wolfe
 
 from scipy.optimize import OptimizeResult

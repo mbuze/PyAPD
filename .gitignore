@@ -4,6 +4,8 @@ PyAPD.egg-info/
 
 dist/
 
+notebooks/not_to_be_uploaded
+
 **/__pycache__/
 
 .tmp.*
