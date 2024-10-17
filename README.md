@@ -29,7 +29,7 @@ but the library is fully functional.
 
 This library is accompanied by the paper  
 
-- M. Buze, J. Feydy, S.M. Roper, K. Sedighiani, D.P. Bourne (2024). Anisotropic power diagrams for polycrystal modeling: efficient generation of curved grains via optimal transport. arXiv e-prints 2403.03571, 2024. [LINK](https://arxiv.org/abs/2403.03571)
+- M. Buze, J. Feydy, S.M. Roper, K. Sedighiani, D.P. Bourne, Anisotropic power diagrams for polycrystal modelling: Efficient generation of curved grains via optimal transport, Computational Materials Science, Volume 245, 2024, [DOI](https://doi.org/10.1016/j.commatsci.2024.113317), [LINK](https://www.sciencedirect.com/science/article/pii/S092702562400538X).
 
 The examples presented in the paper can be found in `/notebooks/paper_examples`, which includes all the Jupyter notebooks as they were run, the data that was generated and the plots from the paper. For the ease of access, here we list them with links to view them statically in NBViewer and also a link to an interactive version in Google Colab. Note that the notebooks relying the loading of data will not work out of the box in Google Colab -- the relevant data will have to be loaded manually. 
 - Runtime tests
@@ -49,13 +49,17 @@ The examples presented in the paper can be found in `/notebooks/paper_examples`,
 
 If you use `PyAPD` for academic research, you may cite the paper to which our library is tied as follows (preprint version for now).
 ```
-@misc{pyapd2024,
-      title={Anisotropic power diagrams for polycrystal modelling: efficient generation of curved grains via optimal transport}, 
-      author={Maciej Buze and Jean Feydy and Steven M. Roper and Karo Sedighiani and David P. Bourne},
-      year={2024},
-      eprint={2403.03571},
-      archivePrefix={arXiv},
-      primaryClass={cond-mat.mtrl-sci}
+@article{PyAPD,
+title = {Anisotropic power diagrams for polycrystal modelling: Efficient generation of curved grains via optimal transport},
+journal = {Computational Materials Science},
+volume = {245},
+pages = {113317},
+year = {2024},
+issn = {0927-0256},
+doi = {https://doi.org/10.1016/j.commatsci.2024.113317},
+url = {https://www.sciencedirect.com/science/article/pii/S092702562400538X},
+author = {M. Buze and J. Feydy and S.M. Roper and K. Sedighiani and D.P. Bourne},
+keywords = {Anisotropic power diagrams, Polycrystalline materials, Microstructure generation, Optimal transport},
 }
 ```
 
