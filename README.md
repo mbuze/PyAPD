@@ -47,7 +47,7 @@ The examples presented in the paper can be found in `/notebooks/paper_examples`,
 
 ## Citing this work
 
-If you use `PyAPD` for academic research, you may cite the paper to which our library is tied as follows (preprint version for now).
+If you use `PyAPD` for academic research, you may cite the paper to which our library is tied as follows.
 ```
 @article{PyAPD,
 title = {Anisotropic power diagrams for polycrystal modelling: Efficient generation of curved grains via optimal transport},

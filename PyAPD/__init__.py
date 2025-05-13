@@ -6,6 +6,8 @@ from .override_optimality_condition import *
 #from .sinkhorn import *
 from .ebsd_utils import *
 from .apds import *
+from .log_res import *
+from .log_res_utils import *
 
 
 # __all__ = ["geometry_utils",
