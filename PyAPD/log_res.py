@@ -187,7 +187,7 @@ class min_diagram_system:
         return (-self.theta_l*self.dml).sum(dim=2).argmin(dim=0).ravel()
 
     
-    def plot_diagram(self):
+    def plot_diagram(self, color_by = None):
         maxes = self.Y.max((0),keepdims=True).values[0]
         mins = self.Y.min((0),keepdims=True).values[0]
         dom_x = [mins[0],maxes[0]]
@@ -196,26 +196,27 @@ class min_diagram_system:
         fig, ax = plt.subplots(1,2)
         fig.set_size_inches(10.5, 10.5, forward=True)
         I_new = gridify_Y_I(self.Y.cpu(),self.I.cpu(), domain.cpu() , self.pixel_params,
-                    color_by = None)
+                    color_by = color_by)
         ax[0].imshow(I_new,origin = 'lower')
         I = self.assemble_diagram()
         I_new = gridify_Y_I(self.Y.cpu(),I.cpu(), domain.cpu() , self.pixel_params,
-                    color_by = None)
+                    color_by = color_by)
         ax[1].imshow(I_new,origin = 'lower')
         return fig, ax
 
     def apd_from_grain_map(self):
         guess = physical_heuristic_guess(self.I,self.Y,ho = 2)
         moments = calculate_moments_from_data(self.I,self.Y,ho = 2)
+        
         As_guess1 = torch.stack((guess[:,0],guess[:,1]),dim=1)
         As_guess2 = torch.stack((guess[:,1],guess[:,2]),dim=1)
         As_guess = torch.stack((As_guess1,As_guess2),dim=2)
     
-        dets =  torch.sqrt(torch.linalg.det(As_guess))
-    
-        As_guess1 = torch.stack((guess[:,0]/dets,guess[:,1]/dets),dim=1)
-        As_guess2 = torch.stack((guess[:,1]/dets,guess[:,2]/dets),dim=1)
-        As_guess = torch.stack((As_guess1,As_guess2),dim=2)
+        #dets =  torch.sqrt(torch.linalg.det(As_guess))
+        #As_guess1 = torch.stack((guess[:,0]/dets,guess[:,1]/dets),dim=1)
+        #As_guess2 = torch.stack((guess[:,1]/dets,guess[:,2]/dets),dim=1)
+        #As_guess = torch.stack((As_guess1,As_guess2),dim=2)
+        
         XX = guess[:,3:5]
         maxes = self.Y.max((0),keepdims=True).values[0]
         mins = self.Y.min((0),keepdims=True).values[0]
@@ -227,7 +228,8 @@ class min_diagram_system:
                                 pixel_params = self.pixel_params,
                                 As = As_guess.contiguous(),
                                 target_masses= (moments[:,0]/len(self.Y)).contiguous(),
-                                heuristic_W=True)
+                                heuristic_W=True,
+                                dt = self.dt)
 
 
 
