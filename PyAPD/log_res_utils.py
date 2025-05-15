@@ -15,7 +15,7 @@ def assemble_design_matrix(Y,
         Y_d_t = Y[:,d][:,None].expand(-1,ho+1).detach().clone()
         for a in range(0,ho+1):
             #Y_d_t[:,a] = torch.from_numpy(basis.basis(a)(Y_d_t[:,a]))
-            Y_d_t[:,a] = basis.basis(a)(Y_d_t[:,a])
+            Y_d_t[:,a] = basis.basis(a)(Y_d_t[:,a].cpu()).to(Y.device)
         if Y_d is None:
             Y_d = Y_d_t
         else:
