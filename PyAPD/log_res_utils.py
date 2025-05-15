@@ -14,7 +14,8 @@ def assemble_design_matrix(Y,
     for d in range(D):
         Y_d_t = Y[:,d][:,None].expand(-1,ho+1).detach().clone()
         for a in range(0,ho+1):
-            Y_d_t[:,a] = torch.from_numpy(basis.basis(a)(Y_d_t[:,a]))
+            #Y_d_t[:,a] = torch.from_numpy(basis.basis(a)(Y_d_t[:,a]))
+            Y_d_t[:,a] = basis.basis(a)(Y_d_t[:,a])
         if Y_d is None:
             Y_d = Y_d_t
         else:
@@ -28,7 +29,7 @@ def assemble_design_matrix(Y,
             design_matrix[:,ii] = math.prod([Y_d[:,indices[d],d] for d in range(D)])
             ii += 1
 
-    return design_matrix / eps
+    return design_matrix.to(Y.device) / eps
 
 
 def reorder_variables(theta, # N x K Torch tensor where N is the number of grains, K is the number of features

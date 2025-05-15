@@ -49,8 +49,8 @@ class min_diagram_system:
         
         self.dt = dt
         self.device = device
-        torch.set_default_dtype(dt)
-        torch.set_default_device(device)
+        #torch.set_default_dtype(dt)
+        #torch.set_default_device(device)
 
         self.set_grain_map(Y,I,pixel_params)
         self.set_theta(theta)
@@ -66,7 +66,7 @@ class min_diagram_system:
         #Y = self.Y if Y is None else Y
         counter = 0
         if basis is not None and basis is not self.basis:
-            self.theta = convert_theta_between_bases(self.theta, ho = self.ho, D = self.D, basis_end = basis)
+            self.theta = convert_theta_between_bases(self.theta, ho = self.ho, D = self.D, basis_end = basis, basis_start = self.basis)
             self.basis = basis
             counter += 1
         if ho is not None and ho <= self.ho:
@@ -92,11 +92,11 @@ class min_diagram_system:
 
     def set_grain_map(self,Y = None, I=None, pixel_params = None):
         if Y is None:
-            apd = apd_system(N=self.N,D=self.D,pixel_size_prefactor = self.pixel_size_prefactor, ani_thres = self.ani_thres)
+            apd = apd_system(N=self.N,D=self.D,pixel_size_prefactor = self.pixel_size_prefactor, ani_thres = self.ani_thres, dt = self.dt)
             apd.assemble_pixels()
             Y = apd.Y
             I = apd.assemble_apd()
-            pixel_params = apd.pixel_params()
+            pixel_params = apd.pixel_params
         if self.data_rescaling_type == "centered_unit_interval":
             Y2 = Y - Y.mean((0),keepdim=True)
             Y2 /= Y2.max((0), keepdim=True).values
@@ -121,25 +121,25 @@ class min_diagram_system:
                     phys_guess = physical_heuristic_guess(self.I,self.Y,ho = self.ho)
                     guess = convert_from_phys_to_lr(phys_guess,ho = self.ho)
                     guess = guess-guess[0,:]
-                    self.theta = convert_theta_between_bases(guess,ho=self.ho,D=self.D,basis_end = self.basis)
+                    self.theta = convert_theta_between_bases(guess,ho=self.ho,D=self.D,basis_end = self.basis).to(self.device)
                 else:
                     phys_guess = physical_heuristic_guess(self.I,self.Y,ho=2)
                     guess = convert_from_phys_to_lr(phys_guess,ho=2)
                     guess = guess-guess[0,:]
                     guess = reorder_variables(guess,self.D,2,self.ho)
-                    self.theta = convert_theta_between_bases(guess,ho = self.ho,D = self.D,basis_end = self.basis)
+                    self.theta = convert_theta_between_bases(guess,ho = self.ho,D = self.D,basis_end = self.basis).to(self.device)
             else:
-                self.theta = torch.zeros((self.N,self.K))
+                self.theta = torch.zeros((self.N,self.K)).to(self.device)
         else:
             #TODO: add assertion check
-            self.theta = theta
+            self.theta = theta.to(self.device)
             
         self.theta_l = LazyTensor(self.theta.view(self.N,1,self.K))
 
     def assemble_design_matrix(self):
         self.design_matrix = assemble_design_matrix(self.Y, ho = self.ho,
                                                     basis = self.basis,
-                                                    eps = self.eps)
+                                                    eps = self.eps).to(self.device)
         self.K = self.design_matrix.shape[1]
         self.dml = LazyTensor(self.design_matrix.view(1, self.M, self.K))
 
@@ -184,7 +184,7 @@ class min_diagram_system:
 
     def assemble_diagram(self):
         self.theta_l = LazyTensor(self.theta.view(self.N,1,self.K))
-        return (-self.theta_l*self.dml).sum(dim=2).argmin(dim=0).ravel()
+        return (-self.theta_l*self.dml).sum(dim=2).argmin(dim=0).ravel().to(self.device)
 
     
     def plot_diagram(self, color_by = None):

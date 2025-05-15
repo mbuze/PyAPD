@@ -39,7 +39,7 @@ class apd_system:
 
         self.dt = dt
         self.device = device
-        torch.set_default_dtype(dt)
+        #torch.set_default_dtype(dt)
         #torch.set_default_device(device)
         self.error_tolerance = error_tolerance
         self.radius_of_exclusion = radius_of_exclusion
