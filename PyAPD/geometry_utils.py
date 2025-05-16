@@ -309,21 +309,21 @@ def specify_volumes(n,
     max_volume_deviation - explained above (optional, default max_volume_deviation = 10)
     """
     if ratios == None:
-        probs=torch.ones(crystal_types)
+        probs=torch.ones(crystal_types).to('cpu')
         c=torch.distributions.Dirichlet(probs)
-        ratios = c.sample()
+        ratios = c.sample().to('cpu')
     
-    rand = torch.rand(n)
-    crystal = torch.ones(n)
+    rand = torch.rand(n).to('cpu')
+    crystal = torch.ones(n).to('cpu')
     for k in range(crystal_types):
-        crystal[sum(ratios[:k]) <= rand] = k+1
+        crystal[sum(ratios[:(k+1)]) <= rand] = k+1
         
     if volume_ratios == None:
-        probs=torch.tensor([[1]*max_volume_deviation]*crystal_types)
+        probs=torch.tensor([[1]*max_volume_deviation]*crystal_types).to('cpu')
         c=torch.distributions.Categorical(probs)
-        volume_ratios = ratios = c.sample() + 1        
+        volume_ratios = ratios = c.sample().to('cpu') + 1        
 
-    volumes = torch.ones(n)
+    volumes = torch.ones(n).to('cpu')
     for k in range(crystal_types):
         volumes[crystal == k+1] = volume_ratios[k]
 
