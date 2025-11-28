@@ -69,4 +69,5 @@ keywords = {Anisotropic power diagrams, Polycrystalline materials, Microstructur
 * [Kanapy](https://github.com/ICAMS/Kanapy)
 * [Neper](https://github.com/neperfepx/neper)
 * [LPM: Laguerre-Polycrystalline-Microstructures](https://github.com/DPBourne/Laguerre-Polycrystalline-Microstructures)
-
+* [SynthetMic](https://github.com/synthetic-microstructures/synthetmic) 
+* [SynthetMic-GUI](https://david-bourne.shinyapps.io/synthetmic-gui/)
