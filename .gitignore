@@ -10,3 +10,10 @@ notebooks/extensions
 **/__pycache__/
 
 .tmp.*
+
+.vscode/
+
+.pytest_cache/
+.ruff_cache/
+
+notebooks/tutorials/outputs/

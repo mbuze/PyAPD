@@ -1,26 +1,34 @@
 import torch
-import numpy as np
-import time
-from pykeops.torch import LazyTensor
-#from torchmin import minimize as minimize_torch
 import torchmin
-
-from torchmin.function import ScalarFunction
-from torchmin.bfgs import BFGS, L_BFGS
-from torchmin.line_search import strong_wolfe
-
 from scipy.optimize import OptimizeResult
+from torchmin.bfgs import BFGS, L_BFGS
+from torchmin.function import ScalarFunction
+from torchmin.line_search import strong_wolfe
 
 try:
     from scipy.optimize.optimize import _status_message
 except ImportError:
     from scipy.optimize._optimize import _status_message
 
+
 @torch.no_grad()
 def _weighted_optimality_minimize_bfgs_core(
-        fun, x0, lr=1., low_mem=False, history_size=100, inv_hess=True,
-        max_iter=None, line_search='strong-wolfe', gtol=None, xtol=1e-9,
-        normp=float('inf'), callback=None, disp=0, return_all=False):
+    fun,
+    x0,
+    lr=1.0,
+    low_mem=False,
+    history_size=100,
+    inv_hess=True,
+    max_iter=None,
+    line_search="strong-wolfe",
+    gtol=None,
+    xtol=1e-9,
+    normp=float("inf"),
+    callback=None,
+    disp=0,
+    return_all=False,
+    **kwargs,
+):
     """Minimize a multivariate function with BFGS or L-BFGS.
 
     We choose from BFGS/L-BFGS with the `low_mem` argument.
@@ -68,25 +76,25 @@ def _weighted_optimality_minimize_bfgs_core(
     """
     print("Optimality condition successfully overwritten.")
     if gtol is None:
-        gtol = 1e-5*torch.ones(len(x0))
+        gtol = 1e-5 * torch.ones(len(x0))
     lr = float(lr)
     disp = int(disp)
     if max_iter is None:
         max_iter = x0.numel() * 200
     if low_mem and not inv_hess:
-        raise ValueError('inv_hess=False is not available for L-BFGS.')
+        raise ValueError("inv_hess=False is not available for L-BFGS.")
 
     # construct scalar objective function
     sf = ScalarFunction(fun, x0.shape)
     closure = sf.closure
-    if line_search == 'strong-wolfe':
+    if line_search == "strong-wolfe":
         dir_evaluate = sf.dir_evaluate
 
     # compute initial f(x) and f'(x)
     x = x0.detach().view(-1).clone(memory_format=torch.contiguous_format)
     f, g, _, _ = closure(x)
     if disp > 1:
-        print('initial fval: %0.4f' % f)
+        print(f"initial fval: {f.item():0.4f}")
     if return_all:
         allvecs = [x]
 
@@ -96,12 +104,11 @@ def _weighted_optimality_minimize_bfgs_core(
     else:
         hess = BFGS(x, inv_hess)
     d = g.neg()
-    t = min(1., g.norm(p=1).reciprocal()) * lr
+    t = min(1.0, g.norm(p=1).reciprocal()) * lr
     n_iter = 0
 
     # BFGS iterations
-    for n_iter in range(1, max_iter+1):
-
+    for n_iter in range(1, max_iter + 1):
         # ==================================
         #   compute Quasi-Newton direction
         # ==================================
@@ -115,27 +122,26 @@ def _weighted_optimality_minimize_bfgs_core(
         # check if directional derivative is below tolerance
         if gtd > -xtol:
             warnflag = 4
-            msg = 'A non-descent direction was encountered.'
+            msg = "A non-descent direction was encountered."
             break
 
         # ======================
         #   update parameter
         # ======================
 
-        if line_search == 'none':
+        if line_search == "none":
             # no line search, move with fixed-step
             x_new = x + d.mul(t)
             f_new, g_new, _, _ = closure(x_new)
-        elif line_search == 'strong-wolfe':
+        elif line_search == "strong-wolfe":
             #  Determine step size via strong-wolfe line search
-            f_new, g_new, t, ls_evals = \
-                strong_wolfe(dir_evaluate, x, t, d, f, g, gtd)
+            f_new, g_new, t, ls_evals = strong_wolfe(dir_evaluate, x, t, d, f, g, gtd)
             x_new = x + d.mul(t)
         else:
-            raise ValueError('invalid line_search option {}.'.format(line_search))
+            raise ValueError(f"invalid line_search option {line_search}.")
 
         if disp > 1:
-            print('iter %3d - fval: %0.4f' % (n_iter, f_new))
+            print(f"iter {n_iter:3d} - fval: {f_new.item():0.4f}")
         if return_all:
             allvecs.append(x_new)
         if callback is not None:
@@ -157,7 +163,7 @@ def _weighted_optimality_minimize_bfgs_core(
         # convergence by insufficient progress
         if (s.norm(p=normp) <= xtol) | ((f_new - f).abs() <= xtol):
             warnflag = 0
-            msg = _status_message['success']
+            msg = _status_message["success"]
             break
 
         # update state
@@ -169,37 +175,44 @@ def _weighted_optimality_minimize_bfgs_core(
         # convergence by 1st-order optimality
         if (g.abs() <= gtol).sum() == len(x0):
             warnflag = 0
-            msg = _status_message['success']
+            msg = _status_message["success"]
             break
 
         # precision loss; exit
         if ~f.isfinite():
             warnflag = 2
-            msg = _status_message['pr_loss']
+            msg = _status_message["pr_loss"]
             break
 
     else:
         # if we get to the end, the maximum num. iterations was reached
         warnflag = 1
-        msg = _status_message['maxiter']
+        msg = _status_message["maxiter"]
 
     if disp:
         print(msg)
-        print("         Current function value: %f" % f)
-        print("         Iterations: %d" % n_iter)
-        print("         Function evaluations: %d" % sf.nfev)
-    result = OptimizeResult(fun=f, x=x.view_as(x0), grad=g.view_as(x0),
-                            status=warnflag, success=(warnflag==0),
-                            message=msg, nit=n_iter, nfev=sf.nfev)
+        print(f"         Current function value: {f.item():f}")
+        print(f"         Iterations: {n_iter:d}")
+        print(f"         Function evaluations: {sf.nfev:d}")
+    result = OptimizeResult(
+        fun=f,
+        x=x.view_as(x0),
+        grad=g.view_as(x0),
+        status=warnflag,
+        success=(warnflag == 0),
+        message=msg,
+        nit=n_iter,
+        nfev=sf.nfev,
+    )
     if not low_mem:
         if inv_hess:
-            result['hess_inv'] = hess.H.view(2 * x0.shape)
+            result["hess_inv"] = hess.H.view(2 * x0.shape)
         else:
-            result['hess'] = hess.B.view(2 * x0.shape)
+            result["hess"] = hess.B.view(2 * x0.shape)
     if return_all:
-        result['allvecs'] = allvecs
+        result["allvecs"] = allvecs
 
     return result
-    
-    
+
+
 torchmin.bfgs._minimize_bfgs_core = _weighted_optimality_minimize_bfgs_core
