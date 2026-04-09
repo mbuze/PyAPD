@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      KEOPS_VERBOSE: "0"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install CPU-only PyTorch
+        run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Install remaining dependencies
+        run: |
+          grep -v '^torch' requirements.txt > /tmp/req-notorch.txt
+          pip install -r /tmp/req-notorch.txt && pip install -e .
+      - name: Lint
+        run: ruff check .
+      - name: Run tests
+        run: pytest
